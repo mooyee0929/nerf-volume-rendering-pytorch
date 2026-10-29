@@ -164,8 +164,7 @@ def get_rays(H, W, K, c2w):
             rays_d: (H, W, 3), ray directions
     """
     #############################################################
-    # TODO: Task 1
-    # HINT: Generate camera rays for each pixel:
+    # Generate camera rays for each pixel:
     # 1. Create pixel coordinates (i, j) (torch.meshgrid might be helpful here)
     # 2. For each pixel, compute ray directions in camera coordinate system using intrinsic matrix K
     # 3. Transform camera coordinates to world coordinates using camera-to-world matrix c2w
@@ -173,7 +172,6 @@ def get_rays(H, W, K, c2w):
     # (NOTE: do not normalize ray directions here. If you check the code, you will find that
     # later on we have a separate variable named viewdirs for normalized ray directions. Both versions will be useful.)
     #############################################################
-    # Your code starts here
 
 
     # ensure it is torch.Tensor
@@ -211,7 +209,6 @@ def get_rays(H, W, K, c2w):
     rays_o = c2w[:3, 3].expand(rays_d.shape)  # (H, W, 3)
 
     
-    # Your code ends here
     #############################################################
     return rays_o, rays_d
 

@@ -258,13 +258,11 @@ def volume_rendering(raw, z_vals, rays_d, white_bkgd=False):
     weights = compute_weights(alpha)
     
     #############################################################
-    # TODO: 3d
-    # HINT: Compute the final volume rendering outputs:
+    # Compute the volume rendering outputs:
     # - rgb_map: weighted sum of colors along each ray
     # - depth_map: weighted sum of depths along each ray  
     # - acc_map: sum of weights (total opacity) along each ray
     #############################################################
-    # Your code starts here
      # RGB Map: C(r) = Σ wi * ci
     # Weighted sum of colors along the ray (Equation 3)
     rgb_map = torch.sum(weights[..., None] * rgb, dim=-2)  # [N_rays, 3]
@@ -278,7 +276,6 @@ def volume_rendering(raw, z_vals, rays_d, white_bkgd=False):
     # acc_map ≈ 1 means ray hit something, ≈ 0 means ray passed through empty space
     acc_map = torch.sum(weights, dim=-1)  # [N_rays]
 
-    # Your code ends here
     #############################################################
 
     if white_bkgd:
@@ -296,13 +293,11 @@ def compute_bin_dists(z_vals, rays_d):
         dists: [N_rays, N_samples] distances used for volume rendering
     """
     #############################################################
-    # TODO: Task 3a
-    # HINT: Compute distances between consecutive sample points:
+    # Compute distances between consecutive sample points:
     # 1. Calculate differences between consecutive z_vals: z_vals[...,1:] - z_vals[...,:-1]
     # 2. Append a large value (1e10) for the last bin to represent infinite distance
     # 3. Scale by ray direction magnitude: ||rays_d|| to get actual distances in 3D space
     #############################################################
-    # Your code starts here
 
     # Step 1: Compute differences between consecutive depth values
     # δi = z_{i+1} - z_i for i = 1, ..., N-1
@@ -321,7 +316,6 @@ def compute_bin_dists(z_vals, rays_d):
     
     return dists
 
-    # Your code ends here
     #############################################################
 
 
@@ -334,13 +328,11 @@ def compute_alpha(sigma, dists):
         alpha: [N_rays, N_samples] alpha values for volume rendering
     """
     #############################################################
-    # TODO: Task 3b
-    # HINT: Compute alpha values for volume rendering:
+    # Compute alpha values for volume rendering:
     # alpha = 1 - exp(-sigma * delta) where
     # - sigma is the density - use ReLU to ensure non-negative
     # - delta is the distance between sample points (dists)
     #############################################################
-    # Your code starts here
 
     # Ensure sigma is non-negative using ReLU activation
     # Negative density doesn't have physical meaning
@@ -353,7 +345,6 @@ def compute_alpha(sigma, dists):
     
     return alpha
 
-    # Your code ends here
     #############################################################
 
 
@@ -365,13 +356,11 @@ def compute_weights(alpha):
         weights: [N_rays, N_samples] weights for volume rendering
     """
     #############################################################
-    # TODO: Task 3c
-    # HINT: Compute weights for volume rendering using alpha values:
+    # Compute weights for volume rendering using alpha values:
     # Weights represent how much each sample contributes to the final color
     # You first need to compute discretized transmittance T[i] (torch.cumprod might be helpful here). Assume T[1] = 1.
     # Then weights[i] = T[i] * alpha[i]
     #############################################################
-    # Your code starts here
     
     # Step 1: Compute (1 - α) for all samples
     one_minus_alpha = 1.0 - alpha + 1e-10  # Add small epsilon for numerical stability
@@ -398,7 +387,6 @@ def compute_weights(alpha):
     
     return weights
 
-    # Your code ends here
     #############################################################
 
 
@@ -415,13 +403,11 @@ def sample_points(rays_o, rays_d, near, far, N_samples):
         pts: [N_rays, N_samples, 3] 3D sampled points
     """
     #############################################################
-    # TODO: Task 2
-    # HINT: Sample points along rays for coarse NeRF:
+    # Sample points along rays for coarse NeRF:
     # 1. Create evenly spaced bins/intervals between near and far
     # 2. Compute sampled depths by uniformly sample points in each
     #    bin for better training
     #############################################################
-    # Your code starts here
     N_rays = rays_o.shape[0]
     device = rays_o.device
 
@@ -447,7 +433,6 @@ def sample_points(rays_o, rays_d, near, far, N_samples):
     t_rand = torch.rand(z_vals.shape, device=device)  # [N_rays, N_samples]
     z_vals = lower + (upper - lower) * t_rand  # [N_rays, N_samples]
 
-    # Your code ends here
     #############################################################
 
     pts = rays_o[...,None,:] + rays_d[...,None,:] * z_vals[...,:,None]
@@ -689,7 +674,7 @@ def train():
         images, poses, render_poses, hwf, i_split = load_blender_data(args.datadir, args.downscale_factor, args.testskip)
         print('Loaded blender', images.shape, render_poses.shape, hwf, args.datadir)
         i_train, i_val, i_test = i_split
-        # Do NOT change this to receive credit.
+        # Fixed subset of test views used for evaluation.
         i_test = i_test[[11, 17, 22]]
 
         near = 2.
