@@ -107,7 +107,7 @@ def create_comparison_figure(base_path, iterations, test_images, output_name='re
     # Add main title
     fig.text(
         0.5, 0.01,
-        'Figure 2: Example of rendering results to submit.',
+        'NeRF test-view renderings (RGB and depth) across training iterations',
         fontsize=16,
         fontweight='bold',
         ha='center',
